@@ -118,7 +118,7 @@ SqlGen::register(new class extends SetupScript
             $holiday  = $this->setToHoliday[$setId] ?? 0;
             $canReuse = !$holiday;                          // can't reuse holiday-sets
             $slotList = [];
-            $pieces   = DB::World()->select('SELECT *, IF(InventoryType = 15, 26, IF(InventoryType = 5, 20, InventoryType)) AS slot, entry AS ARRAY_KEY FROM item_template WHERE itemset = ?d AND (class <> 4 OR subclass NOT IN (1, 2, 3, 4) OR armor > 0 OR Quality = 1) ORDER BY itemLevel, subclass, slot ASC', $setId);
+            $pieces   = DB::World()->select('SELECT *, IF(InventoryType = 15, 26, IF(InventoryType = 5, 20, InventoryType)) AS slot, entry AS ARRAY_KEY FROM item_template WHERE itemset = ?d AND (class <> 4 OR subclass NOT IN (1, 2, 3, 4) OR armor > 0 OR Quality = 1) GROUP BY slot ORDER BY itemLevel, subclass, slot ASC', $setId);
 
             /****************************************/
             /* determine type and reuse from pieces */
