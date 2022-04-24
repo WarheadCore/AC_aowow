@@ -1097,14 +1097,14 @@ SqlGen::register(new class extends SetupScript
                         continue;
 
                     $triggered = true;
-                    pushBuffer($buff, TYPE_SPELL, $effects['effect'.$i.'TriggerSpell'], $trainerId ? TYPE_NPC : 0, $trainerId);
+                    $this->pushBuffer($buff, TYPE_SPELL, $effects['effect'.$i.'TriggerSpell'], $trainerId ? TYPE_NPC : 0, $trainerId);
                 }
 
                 if (!$triggered)
-                    pushBuffer($buff, TYPE_SPELL, $spellId, $trainerId ? TYPE_NPC : 0, $trainerId);
+                    $this->pushBuffer($buff, TYPE_SPELL, $spellId, $trainerId ? TYPE_NPC : 0, $trainerId);
             }
 
-            DB::Aowow()->query(queryfy('[V]', $buff, $insMore), 6, 6, 6);
+            DB::Aowow()->query($this->queryfy($buff, $insMore), 6, 6, 6);
         }
 
         #  7: Discovery
