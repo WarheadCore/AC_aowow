@@ -288,11 +288,16 @@ SqlGen::register(new class extends SetupScript
             /* get name & description */
             /**************************/
 
+            CLI::write(" -- ", CLI::LOG_WARN);
+            CLI::write("Set id: " .$setId, CLI::LOG_WARN);
+
             foreach (array_column($spells, 0) as $spellId)
                 CLI::write("spells 0: " .$spellId, CLI::LOG_WARN);
 
             foreach (array_column($spells, 1) as $spellId)
                 CLI::write("spells 1: " .$spellId, CLI::LOG_WARN);
+
+            CLI::write(" -- ", CLI::LOG_WARN);
 
             foreach (array_keys(array_filter(Util::$localeStrings)) as $loc)
             {
