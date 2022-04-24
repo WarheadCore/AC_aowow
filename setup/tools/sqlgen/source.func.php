@@ -1052,9 +1052,33 @@ SqlGen::register(new class extends SetupScript
 
         #  6: Trainer
         CLI::write('   * #6  Trainer');
-        if ($tNpcs = DB::World()->select('SELECT SpellID AS ARRAY_KEY, cdt.CreatureId AS entry, COUNT(1) AS qty FROM `trainer_spell` ts JOIN `creature_default_trainer` cdt ON cdt.TrainerId = ts.TrainerId GROUP BY ARRAY_KEY'))
+        // if ($tNpcs = DB::World()->select('SELECT SpellID AS ARRAY_KEY, cdt.CreatureId AS entry, COUNT(1) AS qty FROM `trainer_spell` ts JOIN `creature_default_trainer` cdt ON cdt.TrainerId = ts.TrainerId GROUP BY ARRAY_KEY'))
+        // {
+        //     $tSpells = DB::Aowow()->select('SELECT id AS ARRAY_KEY, effect1Id, effect2Id, effect3Id, effect1TriggerSpell, effect2TriggerSpell, effect3TriggerSpell FROM dbc_spell WHERE id IN (?a)', array_keys($tNpcs));
+        //     $buff    = [];
+
+        //     // todo (med): this skips some spells (e.g. riding)
+        //     foreach ($tNpcs as $spellId => $npc)
+        //     {
+        //         if (!isset($tSpells[$spellId]))
+        //             continue;
+
+        //         $effects   = $tSpells[$spellId];
+        //         $trainerId = $npc['qty'] > 1 ? 0 : $npc['entry'];
+
+        //         for ($i = 1; $i <= 3; $i++)
+        //             if ($effects['effect'.$i.'Id'] == 36)       // effect: learnSpell
+        //                 $this->pushBuffer($buff, TYPE_SPELL, $effects['effect'.$i.'TriggerSpell'], $trainerId ? TYPE_NPC : 0, $trainerId);
+
+        //         $this->pushBuffer($buff, TYPE_SPELL, $spellId, $trainerId ? TYPE_NPC : 0, $trainerId);
+        //     }
+
+        //     DB::Aowow()->query($this->queryfy($buff, $insMore), 6, 6, 6);
+        // }
+
+        if ($tNpcs = DB::World()->select('SELECT SpellID AS ARRAY_KEY, ID AS entry, COUNT(1) AS qty FROM npc_trainer WHERE SpellID > 0 GROUP BY ARRAY_KEY'))
         {
-            $tSpells = DB::Aowow()->select('SELECT id AS ARRAY_KEY, effect1Id, effect2Id, effect3Id, effect1TriggerSpell, effect2TriggerSpell, effect3TriggerSpell FROM dbc_spell WHERE id IN (?a)', array_keys($tNpcs));
+            $tSpells = DB::Aowow()->select('SELECT Id AS ARRAY_KEY, effect1Id, effect2Id, effect3Id, effect1TriggerSpell, effect2TriggerSpell, effect3TriggerSpell FROM dbc_spell WHERE Id IN (?a)', array_keys($tNpcs));
             $buff    = [];
 
             // todo (med): this skips some spells (e.g. riding)
@@ -1064,16 +1088,23 @@ SqlGen::register(new class extends SetupScript
                     continue;
 
                 $effects   = $tSpells[$spellId];
-                $trainerId = $npc['qty'] > 1 ? 0 : $npc['entry'];
+                $trainerId = $npc['entry'] > 200000 || $npc['qty'] > 1 ? null : $npc['entry'];
 
+                $triggered = false;
                 for ($i = 1; $i <= 3; $i++)
-                    if ($effects['effect'.$i.'Id'] == 36)       // effect: learnSpell
-                        $this->pushBuffer($buff, TYPE_SPELL, $effects['effect'.$i.'TriggerSpell'], $trainerId ? TYPE_NPC : 0, $trainerId);
+                {
+                    if ($effects['effect'.$i.'Id'] != 36)       // effect: learnSpell
+                        continue;
 
-                $this->pushBuffer($buff, TYPE_SPELL, $spellId, $trainerId ? TYPE_NPC : 0, $trainerId);
+                    $triggered = true;
+                    pushBuffer($buff, TYPE_SPELL, $effects['effect'.$i.'TriggerSpell'], $trainerId ? TYPE_NPC : 0, $trainerId);
+                }
+
+                if (!$triggered)
+                    pushBuffer($buff, TYPE_SPELL, $spellId, $trainerId ? TYPE_NPC : 0, $trainerId);
             }
 
-            DB::Aowow()->query($this->queryfy($buff, $insMore), 6, 6, 6);
+            DB::Aowow()->query(queryfy('[V]', $buff, $insMore), 6, 6, 6);
         }
 
         #  7: Discovery
