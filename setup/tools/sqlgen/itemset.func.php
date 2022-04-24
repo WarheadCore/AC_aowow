@@ -264,15 +264,6 @@ SqlGen::register(new class extends SetupScript
                 $min     = $min ? [min($min)] : [0];
             }
 
-            CLI::write(" -- ", CLI::LOG_WARN);
-            CLI::write("Set id: " .$setId, CLI::LOG_WARN);
-
-            foreach ($items as $vId => $vSet)
-                foreach ($vSet as $itemid)
-                    CLI::write("Item: " .$itemid, CLI::LOG_WARN);
-
-            CLI::write(" -- ", CLI::LOG_WARN);
-
             foreach ($items as &$subsets)
                 $subsets = array_pad($subsets, 10, 0);
 
