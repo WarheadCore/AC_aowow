@@ -107,6 +107,7 @@ SqlGen::register(new class extends SetupScript
         $vIdx      = 0;
         $virtualId = 0;
         $sets      = DB::Aowow()->select('SELECT *, id AS ARRAY_KEY FROM dbc_itemset');
+
         foreach ($sets as $setId => $setData)
         {
             $spells    = $items  = $mods = $descText = $name   = $gains   = [];
@@ -286,6 +287,12 @@ SqlGen::register(new class extends SetupScript
             /**************************/
             /* get name & description */
             /**************************/
+
+            foreach (array_column($spells, 0) as $spellId)
+                CLI::write("spells 0: " .$spellId, CLI::LOG_WARN);
+
+            foreach (array_column($spells, 1) as $spellId)
+                CLI::write("spells 1: " .$spellId, CLI::LOG_WARN);
 
             foreach (array_keys(array_filter(Util::$localeStrings)) as $loc)
             {
