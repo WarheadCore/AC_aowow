@@ -20,7 +20,7 @@ SqlGen::register(new class extends SetupScript
     protected $command = 'itemset';
 
     protected $tblDependencyAowow = ['spell'];
-    protected $tblDependencyTC    = ['item_template', 'game_event'];
+    protected $tblDependencyTC    = ['item_template', 'game_event', 'itemset'];
     protected $dbcSourceFiles     = ['itemset'];
 
     private $customData = array(
